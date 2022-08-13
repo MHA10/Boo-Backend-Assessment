@@ -5,7 +5,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const db = require("./db/db");
 
-const connectServer = async () => {
+const connectServer = () => {
     // Using the body parser
     // Need body parser with Express@4 for the request object
     app.use(bodyParser.json());
@@ -31,7 +31,7 @@ const connectServer = async () => {
     console.log("Express started. Listening on %s", port);
 };
 
-const disconnectServer = async () => {
+const disconnectServer = () => {
     process.exit();
 }
 

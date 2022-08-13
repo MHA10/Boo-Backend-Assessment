@@ -6,7 +6,7 @@
     "scripts": {
         "start": "node app",
         "app": "nodemon app",
-        "test": "jest --runInBand --detectOpenHandles --forceExit ./test"
+        "test": "jest --runInBand --detectOpenHandles ./test"
     },
     "keywords": [],
     "author": "",
