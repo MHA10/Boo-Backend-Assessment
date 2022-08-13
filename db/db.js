@@ -21,10 +21,19 @@ const connectDB = async () => {
     }
 };
 
+const clearDB = async () => {
+    const collections = mongoose.connection.collections;
+    for (const key in collections) {
+        const collection = collections[key];
+        await collection.deleteMany();
+    }
+    console.log("MongoDB cleared");
+};
+
 const disconnectDB = async () => {
     await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
-    await mongod.stop();
+    console.log("MongoDB disconnected");
 };
 
-module.exports = { connectDB, disconnectDB };
+module.exports = { connectDB, clearDB, disconnectDB };

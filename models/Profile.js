@@ -23,7 +23,7 @@ const ProfileSchema = new mongoose.Schema({
         required: false,
     },
     tritype: {
-        type: String,
+        type: Number,
         required: false,
     },
     socionics: {

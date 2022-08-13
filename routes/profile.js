@@ -3,7 +3,7 @@
 const express = require("express");
 const router = express.Router();
 
-const Profile = require("../models/Profile");
+const profileService = require("../services/profile.services");
 
 const profiles = [
     {
@@ -33,15 +33,11 @@ module.exports = function () {
     // @access  Public for testing
     router.get("/all", async (req, res) => {
         try {
-            // get all the profiles
-            const profiles = await Profile.find();
-            if (profiles.length === 0) {
-                return res.status(404).json({ msg: "No Profiles found" });
-            }
+            const profiles = await profileService.getProfiles();
             res.json(profiles);
         } catch (err) {
             console.error(err.message);
-            res.status(500).send("Server Error");
+            res.status(404).json({ msg: err.message });
         }
     });
 
@@ -50,21 +46,16 @@ module.exports = function () {
     // @access  Public for testing
     router.get("/:id", async (req, res) => {
         try {
-            const profile = await Profile.findById(req.params.id);
-
-            if (!profile) {
-                return res.status(404).json({ msg: "Profile not found" });
-            }
-
+            const profile = await profileService.getProfileById(req.params.id);
             res.render("profile_template", {
                 profile,
             });
         } catch (err) {
             console.error(err.message);
             if (err.kind === "ObjectId") {
-                return res.status(404).json({ msg: "Profile not found" });
+                return res.status(404).json({ msg: err.message });
             }
-            res.status(500).send("Server Error");
+            return res.status(404).json({ msg: err.message });
         }
     });
 
@@ -72,48 +63,12 @@ module.exports = function () {
     // @desc    Register a new profile
     // @access  Public for testing
     router.post("/", async (req, res) => {
-        const {
-            name,
-            description,
-            mbti,
-            enneagram,
-            variant,
-            tritype,
-            socionics,
-            sloan,
-            psyche,
-            image,
-        } = req.body;
-
         try {
-            // See if profile exists based on name
-            // Assuming profiles have unique names
-            let profile = await Profile.findOne({ name });
-
-            if (profile) {
-                return res
-                    .status(400)
-                    .json({ errors: [{ msg: "Profile already exists" }] });
-            }
-
-            // Creating new Profile
-            profile = new Profile({
-                name,
-                description,
-                mbti,
-                enneagram,
-                variant,
-                tritype,
-                socionics,
-                sloan,
-                psyche,
-                image,
-            });
-            await profile.save();
+            const profile = await profileService.createProfile(req.body);
             res.json(profile);
         } catch (err) {
             console.error(err.message);
-            res.status(500).send("Server error");
+            res.status(404).json({ msg: err.message });
         }
     });
 
